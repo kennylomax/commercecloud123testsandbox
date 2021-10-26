@@ -78,14 +78,15 @@ public class CommerceCloud123Tests {
         }
 
         client = HttpClient.newBuilder().build();
-        request = HttpRequest.newBuilder().uri(URI.create("https://localhost:4200. Have you called yarn start?")).build();
+        request = HttpRequest.newBuilder().uri(URI.create("https://localhost:4200")).build();
         try {
             response = client.send(request, BodyHandlers.ofString());
         } catch (java.io.IOException e) {
             // Expect an https-related error to be thrown, but what matters is the assertion in the finally block
         } finally {
+            System.out.println("OUTPUT response.statusCode(): "+response.statusCode());
             assertNotEquals(  "Could not access access Spartacus Storefront @ https://localhost:4200. Have you called yarn start?", 404, response.statusCode());
+            assertNotEquals(  "Could not access access Spartacus Storefront @ https://localhost:4200. Have you called yarn start?", 302, response.statusCode());
         }
     }
-
 }
