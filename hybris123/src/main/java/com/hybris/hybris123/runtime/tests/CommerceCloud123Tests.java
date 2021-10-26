@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -76,17 +78,18 @@ public class CommerceCloud123Tests {
         } finally {
             assertNotEquals("Could not access Commerce @ http://localhost:9001. Have you started the server?", 404, response.statusCode());
         }
-
-        client = HttpClient.newBuilder().build();
-        request = HttpRequest.newBuilder().uri(URI.create("https://localhost:4200")).build();
-        try {
-            response = client.send(request, BodyHandlers.ofString());
-        } catch (java.io.IOException e) {
-            // Expect an https-related error to be thrown, but what matters is the assertion in the finally block
-        } finally {
-            System.out.println("OUTPUT response.statusCode(): "+response.statusCode());
-            assertNotEquals(  "Could not access access Spartacus Storefront @ https://localhost:4200. Have you called yarn start?", 404, response.statusCode());
-            assertNotEquals(  "Could not access access Spartacus Storefront @ https://localhost:4200. Have you called yarn start?", 302, response.statusCode());
+ 
+        URL url = new URL("https://localhost:4200");
+        try (
+            java.io.BufferedReader reader = new java.io.BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
+        }  
+        catch (java.net.ConnectException e) {
+            fail("Could not reach Spartacus storefront. Have you called yarn start? ");
         }
+        catch (javax.net.ssl.SSLHandshakeException e) {  
+            // Spartacus is up and running.
+        }
+        
     }
+
 }
